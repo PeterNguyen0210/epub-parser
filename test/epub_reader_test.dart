@@ -10,7 +10,7 @@ import 'package:epub_parser/src/model/epub_book_ref.dart';
 import 'package:epub_parser/src/model/epub_book.dart';
 
 main() async {
-  String fileName = "orwell-animal-farm.epub";
+  String fileName = "Deception Point.epub";
   String fullPath = path.join(io.Directory.current.path, "test", "res", fileName);
   var targetFile = new io.File(fullPath);
   if (!(await targetFile.exists())) {

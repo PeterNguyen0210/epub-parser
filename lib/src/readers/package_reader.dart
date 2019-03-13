@@ -56,14 +56,14 @@ class PackageReader {
     Metadata metadata = new Metadata();
     xml.XmlElement metadataElement = packageDocument.findAllElements("metadata").first;
 
-    metadata.identifier = metadataElement.findElements("dc:identifier").first.text;
-    metadata.title = metadataElement.findElements("dc:title").first.text;
-    metadata.language = metadataElement.findElements("dc:language").first.text;
-    metadata.creator = metadataElement.findElements("dc:creator").first.text;
-    metadata.date = metadataElement.findElements("dc:date").first.text;
-    metadata.publisher = metadataElement.findElements("dc:publisher").first.text;
-    metadata.rights = metadataElement.findElements("dc:rights").first.text;
-    metadata.subject = metadataElement.findElements("dc:subject").first.text;
+    metadata.identifier = getValueOrNull(metadataElement, "dc:identifier");
+    metadata.title = getValueOrNull(metadataElement, "dc:title");
+    metadata.language = getValueOrNull(metadataElement, "dc:language");
+    metadata.creator = getValueOrNull(metadataElement, "dc:creator");
+    metadata.date = getValueOrNull(metadataElement, "dc:date");
+    metadata.publisher = getValueOrNull(metadataElement, "dc:publisher");
+    metadata.rights = getValueOrNull(metadataElement, "dc:rights");
+    metadata.subject = getValueOrNull(metadataElement, "dc:subject");
     metadata.metaItems = _readMetaItems(metadataElement);
 
     return metadata;
@@ -131,5 +131,10 @@ class PackageReader {
       default:
         return ContentType.UNKNOWN;
     }
+  }
+
+  static String getValueOrNull(xml.XmlElement element, String key) {
+    Iterable<xml.XmlElement> target = element.findElements(key);
+    return target != null && target.length > 0 ? element.findElements(key).first.text : null;
   }
 }

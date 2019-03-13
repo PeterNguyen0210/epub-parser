@@ -16,6 +16,7 @@ class EpubReader {
     bookRef.title = bookRef.package.metadata.title;
     bookRef.author = bookRef.package.metadata.creator;
     bookRef.coverImage = ImageReader.readCoverImage(bookRef);
+
     return bookRef;
   }
 
@@ -24,6 +25,7 @@ class EpubReader {
     EpubBookRef bookRef = await openBook(bytes);
 
     book.content = ContentReader.readContent(bookRef);
-    return null;
+    
+    return book;
   }
 }

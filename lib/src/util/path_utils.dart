@@ -4,4 +4,10 @@ class PathUtils {
     tmp.removeLast();
     return tmp.join("/");
   }
+
+  static String getContentPath(String containerDirectory, String filePath) {
+    return (containerDirectory == null || containerDirectory == "")
+        ? filePath
+        : [containerDirectory, filePath].join("/");
+  }
 }
