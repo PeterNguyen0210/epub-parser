@@ -1,16 +1,16 @@
 import 'package:archive/archive.dart';
 
-import 'package:epub_parser/src/model/book_ref.dart';
-import 'package:epub_parser/src/model/book.dart';
+import 'package:epub_parser/src/model/epub_book_ref.dart';
+import 'package:epub_parser/src/model/epub_book.dart';
 import 'package:epub_parser/src/readers/content_reader.dart';
 import 'package:epub_parser/src/readers/image_reader.dart';
 import 'package:epub_parser/src/readers/package_reader.dart';
 
 class EpubReader {
-  static Future<BookRef> openBook(List<int> bytes) async {
+  static Future<EpubBookRef> openBook(List<int> bytes) async {
     Archive archive = new ZipDecoder().decodeBytes(bytes);
 
-    BookRef bookRef = new BookRef();
+    EpubBookRef bookRef = new EpubBookRef();
     bookRef.archive = archive;
     bookRef.package = PackageReader.readPackage(archive);
     bookRef.title = bookRef.package.metadata.title;
@@ -19,9 +19,9 @@ class EpubReader {
     return bookRef;
   }
 
-  static Future<Book> readBook(List<int> bytes) async {
-    Book book = new Book();
-    BookRef bookRef = await openBook(bytes);
+  static Future<EpubBook> readBook(List<int> bytes) async {
+    EpubBook book = new EpubBook();
+    EpubBookRef bookRef = await openBook(bytes);
 
     book.content = ContentReader.readContent(bookRef);
     return null;

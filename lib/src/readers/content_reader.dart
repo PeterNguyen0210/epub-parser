@@ -1,13 +1,12 @@
 import 'dart:convert';
 import 'package:archive/src/archive.dart';
 
-import 'package:epub_parser/src/model/book_ref.dart';
 import 'package:epub_parser/src/model/content/book_content.dart';
+import 'package:epub_parser/src/model/epub_book_ref.dart';
 import 'package:epub_parser/src/model/opf/content_type.dart';
-import 'package:epub_parser/src/util/path_utils.dart';
 
 class ContentReader {
-  static BookContent readContent(BookRef bookRef) {
+  static BookContent readContent(EpubBookRef bookRef) {
     BookContent content = new BookContent();
 
     content.htmlContent = _readHTMLContent(bookRef);
@@ -16,7 +15,7 @@ class ContentReader {
     return null;
   }
 
-  static Map<String, String> _readHTMLContent(BookRef bookRef) {
+  static Map<String, String> _readHTMLContent(EpubBookRef bookRef) {
     Map<String, String> htmlContent = new Map<String, String>();
     bookRef.package.manifest.items.forEach((item) {
       if ([ContentType.HTML, ContentType.XHTML_XML].contains(item.mediaType)) {
@@ -28,7 +27,7 @@ class ContentReader {
     return htmlContent;
   }
 
-  static Map<String, String> _readCSSContent(BookRef bookRef) {
+  static Map<String, String> _readCSSContent(EpubBookRef bookRef) {
     Map<String, String> cssContent = new Map<String, String>();
     bookRef.package.manifest.items.forEach((item) {
       if ([ContentType.CSS].contains(item.mediaType)) {
@@ -40,7 +39,7 @@ class ContentReader {
     return cssContent;
   }
 
-  static Map<String, List<int>> _readImageContent(BookRef bookRef) {
+  static Map<String, List<int>> _readImageContent(EpubBookRef bookRef) {
     Map<String, List<int>> imageContent = new Map<String, List<int>>();
     bookRef.package.manifest.items.forEach((item) {
       if ([ContentType.CSS].contains(item.mediaType)) {

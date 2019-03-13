@@ -6,8 +6,8 @@ import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
 import 'package:epub_parser/src/epub_reader.dart';
-import 'package:epub_parser/src/model/book_ref.dart';
-import 'package:epub_parser/src/model/book.dart';
+import 'package:epub_parser/src/model/epub_book_ref.dart';
+import 'package:epub_parser/src/model/epub_book.dart';
 
 main() async {
   String fileName = "orwell-animal-farm.epub";
@@ -19,10 +19,10 @@ main() async {
 
   List<int> bytes = await targetFile.readAsBytes();
   test("Test Epub Ref", () async {
-    BookRef epubRef = await EpubReader.openBook(bytes);
+    EpubBookRef epubRef = await EpubReader.openBook(bytes);
   });
   test("Test Epub Read", () async {
-    Book epubRef = await EpubReader.readBook(bytes);
+    EpubBook epubRef = await EpubReader.readBook(bytes);
   });
 
   test("Test Epub dasd", () async {

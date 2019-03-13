@@ -1,11 +1,11 @@
 import 'package:archive/archive.dart';
 
-import 'package:epub_parser/src/model/book_ref.dart';
+import 'package:epub_parser/src/model/epub_book_ref.dart';
 import 'package:epub_parser/src/model/opf/manifest_item.dart';
 import 'package:epub_parser/src/model/opf/meta_item.dart';
 
 class ImageReader {
-  static List<int> readCoverImage(BookRef bookRef) {
+  static List<int> readCoverImage(EpubBookRef bookRef) {
     try {
       MetaItem coverMetaItem = bookRef.package.metadata.metaItems
           .firstWhere((item) => item.name == "cover", orElse: null);
