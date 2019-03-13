@@ -24,4 +24,11 @@ main() async {
   test("Test Epub Read", () async {
     Book epubRef = await EpubReader.readBook(bytes);
   });
+
+  test("Test Epub dasd", () async {
+    String a = "a/b/c";
+    var b = a.split("/");
+    var c = b.removeLast();
+    print(b);
+  });
 }

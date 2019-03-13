@@ -1,5 +1,8 @@
 import 'package:archive/archive.dart';
+import 'package:epub_parser/src/model/opf/content_type.dart';
 import 'package:epub_parser/src/model/opf/manifest_item_ref.dart';
+import 'package:epub_parser/src/model/opf/meta_item.dart';
+import 'package:epub_parser/src/util/path_utils.dart';
 import 'package:xml/xml.dart' as xml;
 import 'dart:convert';
 
@@ -14,6 +17,7 @@ class PackageReader {
     Package package = new Package();
     xml.XmlDocument packageDocument = xml.parse(_getPackageFile(archive));
 
+    package.packageDirectoryPath = PathUtils.getDirectoryPath(getPackageFilePath(archive));
     package.metadata = _readMetadata(packageDocument);
     package.manifest = _readManifest(packageDocument);
     package.spine = _readSpine(packageDocument);
@@ -21,7 +25,7 @@ class PackageReader {
     return package;
   }
 
-  static String _getPackageFile(Archive archive) {
+  static String getPackageFilePath(Archive archive) {
     final CONTAINER_FILE_PATH = "META-INF/container.xml";
     var containerFile = archive.firstWhere((file) => file.name == CONTAINER_FILE_PATH);
 
@@ -34,6 +38,11 @@ class PackageReader {
     var packageFilePath =
         containerDocument.findAllElements("rootfile").first.getAttribute("full-path");
 
+    return packageFilePath;
+  }
+
+  static String _getPackageFile(Archive archive) {
+    String packageFilePath = getPackageFilePath(archive);
     var packageFile = archive.firstWhere((file) => file.name == packageFilePath);
 
     if (packageFile == null) {
@@ -55,8 +64,25 @@ class PackageReader {
     metadata.publisher = metadataElement.findElements("dc:publisher").first.text;
     metadata.rights = metadataElement.findElements("dc:rights").first.text;
     metadata.subject = metadataElement.findElements("dc:subject").first.text;
+    metadata.metaItems = _readMetaItems(metadataElement);
 
     return metadata;
+  }
+
+  static List<MetaItem> _readMetaItems(xml.XmlElement metadataElement) {
+    List<MetaItem> metaItems = new List<MetaItem>();
+
+    metadataElement.findElements("meta").forEach((item) {
+      MetaItem mItem = new MetaItem();
+      mItem.id = item.getAttribute("id");
+      mItem.property = item.getAttribute("property");
+      mItem.content = item.getAttribute("content");
+      mItem.name = item.getAttribute("name");
+
+      metaItems.add(mItem);
+    });
+
+    return metaItems;
   }
 
   static Manifest _readManifest(xml.XmlDocument packageDocument) {
@@ -68,7 +94,7 @@ class PackageReader {
       ManifestItem manifestItem = new ManifestItem();
       manifestItem.id = item.getAttribute("id");
       manifestItem.href = item.getAttribute("href");
-      manifestItem.mediaType = item.getAttribute("media-type");
+      manifestItem.mediaType = _getContentType(item.getAttribute("media-type"));
 
       manifest.items.add(manifestItem);
     });
@@ -78,6 +104,8 @@ class PackageReader {
 
   static Spine _readSpine(xml.XmlDocument packageDocument) {
     Spine spine = new Spine();
+    spine.itemRef = new List<ManifestItemRef>();
+
     xml.XmlElement spineElement = packageDocument.findAllElements("spine").first;
     spineElement.findElements("itemref").forEach((item) {
       ManifestItemRef manifestItemRef = new ManifestItemRef();
@@ -87,5 +115,21 @@ class PackageReader {
       spine.itemRef.add(manifestItemRef);
     });
     return spine;
+  }
+
+  static ContentType _getContentType(String mediaType) {
+    switch (mediaType) {
+      case "application/xhtml+xml":
+        return ContentType.XHTML_XML;
+        break;
+      case "text/css":
+        return ContentType.CSS;
+        break;
+      case "image/jpeg":
+        return ContentType.IMAGE_JPEG;
+        break;
+      default:
+        return ContentType.UNKNOWN;
+    }
   }
 }

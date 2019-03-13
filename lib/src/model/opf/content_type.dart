@@ -1,0 +1,1 @@
+enum ContentType { HTML, XHTML_XML, CSS, IMAGE_JPEG, IMAGE_PNG, UNKNOWN }
